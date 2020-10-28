@@ -5,8 +5,10 @@
 
 ## API
 
+A CryoconController is a SCPI instrument and uses the [easy-scpi](https://pypi.org/project/easy-scpi/) package for means of communication. Thus, all the methods and properties of an easy_scpi.Instrument can be called. 
+
 Channels can be referenced either by their given name or their letter.
-All commands generate a response from the controller, so must only perform queries to keep command and response synched.
+All commands generate a response from the controller, so only queries are performed to keep command and response synched.
 
 ### Methods
 
@@ -53,7 +55,7 @@ All commands generate a response from the controller, so must only perform queri
 **enabled:** Returns whether the temperature controller is currently engaged.
 
 
-### Examples
+### Example
 ~~~python
 # import package
 import cryocon_22c_controller as cc 
@@ -63,6 +65,9 @@ cryo = cc.CryoconController( <port> )
 
 # Connect to the controller
 cryo.connect()
+
+# Check if controller is connected (inherited from easy_scpi.Instrument)
+cryo.is_connected
 
 # Get channel names
 cryo.channels
