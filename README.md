@@ -1,139 +1,81 @@
-# Easy SCPI
-A simple and robust library making communication with [SCPI](https://en.wikipedia.org/wiki/Standard_Commands_for_Programmable_Instruments) (Standard Control of Programmbale Instruments) instruments easy. After creating an instrument object that connects to an actual instrument, commands are sent to the instrument using a property-like format. This class is useful for inheritance when creating a controller for a specific instrument. Communication with instruments is done with [PyVISA](https://pyvisa.readthedocs.io).
+# CryoCon 22C Temperature Controller
 
-> Install with `python -m pip install easy-scpi`
+
+> Install with `python -m pip install cryocon-22c-controller`
 
 ## API
-### SCPI Commands
-Generic SCPI commands can be executed by transforming the SCPI code in to attributes via the hierarchy relationship, then calling it. Instrument properties can be queried by passing no arguments to the call. Commands with no arguments are run by passing an empty string to the call.
 
-#### Examples
-~~~python
-# import package
-import easy_scpi as scpi 
-
-# Connect to an instrument
-inst = scpi.Instrument( <port> )
-
-# Read the voltage [MEASure:VOLTage:DC?]
-inst.measure.voltage.dc()
-# or
-inst.meas.volt.dc()
-
-# Set the voltage to 1 V [MEASure:VOLTage:DC 1]
-inst.measure.voltage.dc( 1 )
-# or
-inst.source.voltage( '1' )
-
-# Execute a command to take a reading [SYSTem:ZCORrect:ACQuire]
-inst.syst.zcor.aqc( '' )
-~~~
-
+Channels can be referenced either by their given name or their letter.
+All commands generate a response from the controller, so must only perform queries to keep command and response synched.
 
 ### Methods
-**Instrument( &lt;port&gt;, backend = '', \*\*resource_params ):** Creates an instance of a SCPI instrument. The **backend** is used to create the [VISA Resource Manager](https://pyvisa.readthedocs.io/en/latest/introduction/getting.html#backend). Upon connection, the **resource_params** are passed to the [VISA resource](https://pyvisa.readthedocs.io/en/latest/introduction/resources.html).
 
-**connect():** Connects the object instance to the actual instrument on the specified port.
+**CryoconController( port, timeout, baud ):** Creates a new CryoconController instance.
 
-**disconnect():** Disconnects the instrument from the program, closing the port.
+**max_temperatrue( loop ):** Returns the maximum set point temperature of the given loop.
 
-**write( &lt;msg&gt; ):** Sends **msg** to the instrument.
+**channel_max_temperatrue( loop ):** Returns the maximum set point temperature of the loop controlling the given channel.
 
-**read():** Gets the most recent response from the instrument.
+**temperature( channel ):** Returns the current temperature of the given channel
 
-**query( &lt;msg&gt; ):** Sends **msg** to the instrument and returns its response.
+**get_channel_loop( channel ):** Returns the loop controlled by the given channel.
 
-**reset():** Sets the instrument to its default state.
+**get_range( loop ):** Gets the output range for the loop. Values are [ 'hi', 'mid', 'low' ].
 
-**init():** Initializes the instrument for a measurement.
+**set_range( loop, range ):** Sets the ouput range for the loop. Range values are [ 'hi', 'mid', 'low' ].
+
+**get_ouput( loop ):** Gets the power output of the loop as a fraction of the full range.
+
+**set_point( channel ):** Returns the set point of the given channel.
+
+**set_temperature( channel, temperature ):** Sets the set point of the controlling loop of the given channel.
+
+**lock( lock ):** Locks or unlocks the front key pad.
+
+**enable():** Engages the temperature controller.
+
+**disable():** Stops the tempreature controller. 
+
+**auto_adjust_range( low_threshold, high_threshold, channles ):** Automatically adjusts the power range.
 
 ### Properties
-**backend:** Returns the name of the VISA backend used. [Read Only]
 
-**inst:** Returns the resource used by the instance. [Read Only]
+**channels:** A dictionary of aliases of the channels.
 
-**port:** The communication port.
+**channel_names:** A dictionary of given name of the channels.
 
-**rid:** The resource id associated with the instrument. [Read Only]
+**loops:** A dictionary of loop:input source pairs.
 
-**resource_params:** Returns the resource parameters passed on creation. [Read Only]
+**max_temps:** A dictionary of maximum set point temperatures for each loop.
 
-**timeout:** The communication timeout of the instrument. [Read Only]
+**units:** A dictionary of units for each channel.
 
-**id:** The manufacturer id of the instrument. [Read Only]
+**enabled:** Returns whether the temperature controller is currently engaged.
 
-**value:** The current value of the instrument. [Read Only]
 
-**connected:** Whether the instrument is connected or not. [Read Only]
-
-**is_connected:** Alias for **connected**.
-
-## Full Example
-#### For use with Tektronix PWS4305
+### Examples
 ~~~python
-# scpi controller
-import easy_scpi as scpi
+# import package
+import cryocon_22c_controller as cc 
 
-class PowerSupply( scpi.Instrument ):
-    
-    def __init__( self ):
-        scpi.SCPI_Instrument.__init__( 
-            self, 
-            port = None, 
-            timeout = 5,
-            read_termination = '\n', 
-            write_termination = '\n' 
-        )
+# Create a controller
+cryo = cc.CryoconController( <port> )
 
-        # other initialization code...
+# Connect to the controller
+cryo.connect()
 
-        
-    #--- public methods ---
+# Get channel names
+cryo.channels
 
-    
-    @property        
-    def voltage( self ):
-        """
-        Returns the voltage setting
-        """
-        return self.source.volt.level()
-    
-    
-    @voltage.setter
-    def voltage( self, volts ):
-        """
-        Sets the voltage of the instrument
-        """
-        self.source.volt.level( volts )
-        
-    
-    @property
-    def current( self ):
-        """
-        Returns the current setting in Amps
-        """
-        return self.source.current.level()
-        
-        
-    @current.setter
-    def current( self, amps ):
-        """
-        Set the current of the instrument
-        """
-        self.source.current.level( amps )
-        
-    
-    def on( self ):
-        """
-        Turns the output on
-        """
-        self.output.state( 'on' )
-        
-        
-    def off( self):
-        """
-        Turns the output off
-        """
-        self.output.state( 'off' )
-        
+# Read the current set point temperature of channel a
+cryo.set_point( 'a' )
+
+# Set the desired temperature set point on channel b
+cryo.set_temperature( 'b', 100 )
+
+# Enable controller
+cryo.enable()
+
+# Disable controller
+cryo.disable()
 ~~~
