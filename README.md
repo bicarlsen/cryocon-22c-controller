@@ -5,14 +5,14 @@
 
 ## API
 
-A CryoconController is a SCPI instrument and uses the [easy-scpi](https://pypi.org/project/easy-scpi/) package for means of communication. Thus, all the methods and properties of an easy_scpi.Instrument can be called. 
+A CryoconController is a SCPI instrument and uses the [easy-scpi](https://pypi.org/project/easy-scpi/) package for means of communication. Thus, all the methods and properties of an `easy_scpi.Instrument` can be called. 
 
 Channels can be referenced either by their given name or their letter.
 All commands generate a response from the controller, so only queries are performed to keep command and response synched.
 
 ### Methods
 
-**CryoconController( port, timeout, baud ):** Creates a new CryoconController instance.
+**CryoconController( port, timeout, baud, backend ):** Creates a new CryoconController instance.
 
 **max_temperatrue( loop ):** Returns the maximum set point temperature of the given loop.
 

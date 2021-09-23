@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="cryocon-22c-controller",
-    version="0.0.2",
+    version="0.0.3",
     author="Brian Carlsen",
     author_email="carlsen.bri@gmail.com",
     description="A package for controlling CryoCon 22C Temperature Controllers",
@@ -16,11 +16,12 @@ setuptools.setup(
     packages=setuptools.find_packages(),
     classifiers=[
         "Programming Language :: Python :: 3",
-        "License :: OSI Approved :: MIT License",
+        "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
         "Operating System :: OS Independent",
         "Development Status :: 3 - Alpha"
     ],
     install_requires=[
-        'easy-scpi'
+        'easy-scpi',
+        'pyvisa-py'
     ]
 )
