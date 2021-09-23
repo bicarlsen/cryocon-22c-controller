@@ -12,7 +12,7 @@ All commands generate a response from the controller, so only queries are perfor
 
 ### Methods
 
-**CryoconController( port, timeout, baud, backend ):** Creates a new CryoconController instance.
+**CryoconController( port, timeout, baud, backend, **resource_params ):** Creates a new CryoconController instance.
 
 **max_temperatrue( loop ):** Returns the maximum set point temperature of the given loop.
 
