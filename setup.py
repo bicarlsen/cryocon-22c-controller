@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="cryocon-22c-controller",
-    version="0.0.3",
+    version="0.0.3.post1",
     author="Brian Carlsen",
     author_email="carlsen.bri@gmail.com",
     description="A package for controlling CryoCon 22C Temperature Controllers",
